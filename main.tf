@@ -7,3 +7,5 @@ resource "aws_instance" "app_server" {
     Owner= "Vamshi"
   }
 }
+
+
