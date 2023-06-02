@@ -1,38 +1,40 @@
 locals {
-  public_cidr=["10.0.0.0/24","10.0.1.0/24","10.0.2.0/24"]
-  private_cidr=["10.0.100.0/24","10.0.101.0/24","10.0.103.0/24"]
-  availability_zone = ["us-east-1a","us-east-1b","us-east-1c"]
-
+  availability_zones = ["us-east-1a", "us-east-1b", "us-east-1c"]
 }
 
 resource "aws_vpc" "main" {
   cidr_block = var.vpc_cidr
-tags = {
+
+  tags = {
     Name = var.env_code
   }
 }
 
 resource "aws_subnet" "public" {
   count = length(var.public_cidr)
-  vpc_id     = aws_vpc.main.id
-  cidr_block = var.public_cidr[count.index]
-  availability_zone = local.availability_zone[count.index]
+
+  vpc_id            = aws_vpc.main.id
+  cidr_block        = var.public_cidr[count.index]
+  availability_zone = local.availability_zones[count.index]
+
   tags = {
-    Name = "${var.env_code}-public${count.index+1}"
+    Name = "${var.env_code}-public${count.index + 1}"
   }
 }
 
 resource "aws_subnet" "private" {
   count = length(var.private_cidr)
-  vpc_id     = aws_vpc.main.id
-  cidr_block = var.private_cidr[count.index]
-  availability_zone = local.availability_zone[count.index]
+
+  vpc_id            = aws_vpc.main.id
+  cidr_block        = var.private_cidr[count.index]
+  availability_zone = local.availability_zones[count.index]
+
   tags = {
-    Name = "${var.env_code}-private${count.index+1}"
+    Name = "${var.env_code}-private${count.index + 1}"
   }
 }
 
-#Internet_Gateway
+
 resource "aws_internet_gateway" "main" {
   vpc_id = aws_vpc.main.id
 
@@ -41,7 +43,6 @@ resource "aws_internet_gateway" "main" {
   }
 }
 
-#Route_Table
 resource "aws_route_table" "public" {
   vpc_id = aws_vpc.main.id
 
@@ -55,9 +56,9 @@ resource "aws_route_table" "public" {
   }
 }
 
-#aws_route_table_association
 resource "aws_route_table_association" "public" {
   count = length(var.public_cidr)
+
   subnet_id      = aws_subnet.public[count.index].id
   route_table_id = aws_route_table.public.id
 }
@@ -65,13 +66,13 @@ resource "aws_route_table_association" "public" {
 resource "aws_eip" "nat" {
   count = length(var.public_cidr)
 
-    vpc      = true
-      tags = {
-    Name = "${var.env_code}-nat${count.index+1}"
+  vpc = true
+
+  tags = {
+    Name = "${var.env_code}-nat${count.index + 1}"
   }
 }
 
-# # #NAT GATWAY for Public Subnet
 resource "aws_nat_gateway" "main" {
   count = length(var.public_cidr)
 
@@ -79,7 +80,7 @@ resource "aws_nat_gateway" "main" {
   subnet_id     = aws_subnet.public[count.index].id
 
   tags = {
-    Name = "${var.env_code}-main${count.index+1}"
+    Name = "${var.env_code}-main${count.index + 1}"
   }
 
   # To ensure proper ordering, it is recommended to add an explicit dependency
@@ -89,21 +90,22 @@ resource "aws_nat_gateway" "main" {
 
 resource "aws_route_table" "private" {
   count = length(var.private_cidr)
+
   vpc_id = aws_vpc.main.id
 
   route {
-    cidr_block = "0.0.0.0/0"
+    cidr_block     = "0.0.0.0/0"
     nat_gateway_id = aws_nat_gateway.main[count.index].id
   }
 
   tags = {
-    Name = "${var.env_code}-private${count.index+1}"
+    Name = "${var.env_code}-private${count.index + 1}"
   }
 }
 
-  resource "aws_route_table_association" "private" {
+resource "aws_route_table_association" "private" {
   count = length(var.private_cidr)
+
   subnet_id      = aws_subnet.private[count.index].id
   route_table_id = aws_route_table.private[count.index].id
 }
-
