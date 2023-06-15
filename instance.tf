@@ -1,8 +1,24 @@
+data "aws_ami" "amazonlinux" {
+  most_recent = true
+
+  filter {
+    name   = "name"
+    values = ["amzn2-ami-kernel-*"]
+  }
+
+  filter {
+    name   = "virtualization-type"
+    values = ["hvm"]
+  }
+
+
+}
+
 resource "aws_instance" "public" {
-  ami                         = "ami-0cff7528ff583bf9a"
+  ami                         = data.aws_ami.amazonlinux.id
   associate_public_ip_address = true
   instance_type               = "t3.micro"
-  key_name                    = "Key_Pair"
+  key_name                    = "Key_Pair_Mumbai"
   vpc_security_group_ids      = [aws_security_group.public.id]
   subnet_id                   = aws_subnet.public[0].id
 
@@ -23,7 +39,7 @@ resource "aws_security_group" "public" {
     protocol    = "tcp"
     cidr_blocks = ["0.0.0.0/0"]
   }
-
+  
   egress {
     from_port   = 0
     to_port     = 0
@@ -36,9 +52,9 @@ resource "aws_security_group" "public" {
 }
 
 resource "aws_instance" "private" {
-  ami                    = "ami-0cff7528ff583bf9a"
+  ami                    = data.aws_ami.amazonlinux.id
   instance_type          = "t3.micro"
-  key_name               = "Key_Pair"
+  key_name               = "Key_Pair_Mumbai"
   vpc_security_group_ids = [aws_security_group.private.id]
   subnet_id              = aws_subnet.private[0].id
 
