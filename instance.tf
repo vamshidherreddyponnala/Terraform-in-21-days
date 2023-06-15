@@ -3,7 +3,7 @@ data "aws_ami" "amazonlinux" {
 
   filter {
     name   = "name"
-    values = [ "amzn2-ami-kernel-*" ]
+    values = ["amzn2-ami-kernel-*"]
   }
 
   filter {
@@ -11,7 +11,7 @@ data "aws_ami" "amazonlinux" {
     values = ["hvm"]
   }
 
-  
+
 }
 
 resource "aws_instance" "public" {
@@ -41,8 +41,8 @@ resource "aws_security_group" "public" {
   }
   ingress {
     description = "HTTP from public"
-    from_port   = 22
-    to_port     = 22
+    from_port   = 80
+    to_port     = 80
     protocol    = "tcp"
     cidr_blocks = ["0.0.0.0/0"]
   }
