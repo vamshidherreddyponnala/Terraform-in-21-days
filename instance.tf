@@ -3,7 +3,7 @@ data "aws_ami" "amazonlinux" {
 
   filter {
     name   = "name"
-    values = [ "amzn2-ami-kernel-*" ]
+    values = ["amzn2-ami-kernel-*"]
   }
 
   filter {
@@ -11,7 +11,7 @@ data "aws_ami" "amazonlinux" {
     values = ["hvm"]
   }
 
-  
+
 }
 
 resource "aws_instance" "public" {
