@@ -21,6 +21,7 @@ resource "aws_instance" "public" {
   key_name                    = "Key_Pair_Mumbai"
   vpc_security_group_ids      = [aws_security_group.public.id]
   subnet_id                   = aws_subnet.public[0].id
+  user_data                   = file("user-data.sh")
 
   tags = {
     Name = "${var.env_code}-public"
@@ -63,6 +64,7 @@ resource "aws_instance" "private" {
   key_name               = "Key_Pair_Mumbai"
   vpc_security_group_ids = [aws_security_group.private.id]
   subnet_id              = aws_subnet.private[0].id
+  user_data = file("user-data.sh")
 
   tags = {
     Name = "${var.env_code}-private"
