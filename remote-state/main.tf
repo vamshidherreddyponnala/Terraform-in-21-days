@@ -15,3 +15,4 @@ resource "aws_dynamodb_table" "state-lock" {
     type = "S"
     }
 }
+
