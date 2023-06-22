@@ -1,9 +1,9 @@
 terraform {
   backend "s3" {
-    bucket = "terraform-remote-256"
+    bucket = "terraform-remote2789"
     key    = "terraform.tfstate"
     region = "us-east-1"
-    dynamodb_table = "terraform-remote-2"
+    dynamodb_table = "terraform-remote"
   }
 }
 
