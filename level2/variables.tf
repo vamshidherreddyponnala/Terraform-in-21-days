@@ -1,4 +1,4 @@
 variable "env_code" {
-    default = "dev"
-  
+  default = "dev"
+
 }
