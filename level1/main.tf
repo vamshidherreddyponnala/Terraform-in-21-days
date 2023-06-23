@@ -66,7 +66,8 @@ resource "aws_route_table_association" "public" {
 resource "aws_eip" "nat" {
   count = length(var.public_cidr)
 
-  vpc = true
+  #vpc = true
+  domain = "vpc"
 
   tags = {
     Name = "${var.env_code}-nat${count.index + 1}"
